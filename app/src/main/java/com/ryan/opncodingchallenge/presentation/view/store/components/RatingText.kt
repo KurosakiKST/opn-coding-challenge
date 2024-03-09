@@ -16,7 +16,10 @@ import androidx.compose.ui.unit.sp
 import com.ryan.opncodingchallenge.R
 
 @Composable
-fun RatingText(modifier: Modifier, ratingNumber: Int) {
+fun RatingText(
+    modifier: Modifier,
+    ratingNumber: Double?
+) {
     Row(
         modifier = modifier
     ) {
@@ -48,6 +51,6 @@ fun RatingText(modifier: Modifier, ratingNumber: Int) {
 fun RatingTextPreview() {
     RatingText(
         modifier = Modifier,
-        ratingNumber = 24
+        ratingNumber = 24.0
     )
 }
