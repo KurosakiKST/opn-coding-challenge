@@ -1,5 +1,6 @@
 package com.ryan.opncodingchallenge.domain.usecase
 
+import com.ryan.opncodingchallenge.domain.model.ProductDomainModel
 import com.ryan.opncodingchallenge.domain.model.StoreDomainModel
 import com.ryan.opncodingchallenge.domain.repository.StoreRepository
 import com.ryan.opncodingchallenge.util.AppResult
@@ -10,5 +11,9 @@ class StoreUseCase @Inject constructor(
 ) {
     suspend fun getStoreData(): AppResult<StoreDomainModel> {
         return storeRepository.getStoreData()
+    }
+
+    suspend fun getProducts(): AppResult<List<ProductDomainModel>> {
+        return storeRepository.getProducts()
     }
 }
