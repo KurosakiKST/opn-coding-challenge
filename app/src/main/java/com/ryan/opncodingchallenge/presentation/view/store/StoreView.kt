@@ -42,10 +42,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.ryan.opncodingchallenge.R
 import com.ryan.opncodingchallenge.presentation.common.ProgressDialog
+import com.ryan.opncodingchallenge.presentation.model.ProductUIModel
 import com.ryan.opncodingchallenge.presentation.model.StoreUIModel
 import com.ryan.opncodingchallenge.presentation.view.store.components.CheckoutButton
 import com.ryan.opncodingchallenge.presentation.view.store.components.DottedLine
 import com.ryan.opncodingchallenge.presentation.view.store.components.OpenCloseTimeText
+import com.ryan.opncodingchallenge.presentation.view.store.components.ProductRow
 import com.ryan.opncodingchallenge.presentation.view.store.components.RatingText
 import com.ryan.opncodingchallenge.presentation.view.store.components.TitleText
 import com.ryan.opncodingchallenge.presentation.viewmodel.StoreViewModel
@@ -62,6 +64,10 @@ fun StoreView(
 
     var storeData by remember {
         mutableStateOf<StoreUIModel?>(null)
+    }
+
+    var productData by remember {
+        mutableStateOf<List<ProductUIModel>?>(null)
     }
 
     var showAlert by remember { mutableStateOf(false) }
@@ -97,6 +103,7 @@ fun StoreView(
 
     LaunchedEffect(Unit) {
         viewModel.getStoreData()
+        viewModel.getProducts()
         scope.launch {
             viewModel.storeState.collect {
                 when (it) {
@@ -120,6 +127,33 @@ fun StoreView(
                     is ViewState.Success -> {
                         showLoading = false
                         storeData = it.data
+                    }
+                }
+            }
+        }
+        scope.launch {
+            viewModel.productState.collect {
+                when (it) {
+                    is ViewState.Error -> {
+
+                        showLoading = false
+                        alertTitle = "Error"
+                        alertMsg = it.error
+                        showAlert = true
+
+                    }
+
+                    ViewState.Loading -> {
+                        showLoading = true
+                    }
+
+                    ViewState.NoData -> {
+                        showLoading = false
+                    }
+
+                    is ViewState.Success -> {
+                        showLoading = false
+                        productData = it.data
                     }
                 }
             }
@@ -220,6 +254,13 @@ fun StoreView(
             TitleText(
                 modifier = Modifier.padding(start = 20.dp, top = 24.dp),
                 title = "Explore Menu"
+            )
+
+            ProductRow(
+                list = productData ?: emptyList(),
+                onItemClicked = {
+
+                }
             )
 
             showAlert()
