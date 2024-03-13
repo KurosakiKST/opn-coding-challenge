@@ -46,6 +46,7 @@ import androidx.core.os.bundleOf
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.ryan.opncodingchallenge.R
+import com.ryan.opncodingchallenge.presentation.common.BottomBar
 import com.ryan.opncodingchallenge.presentation.common.ProgressDialog
 import com.ryan.opncodingchallenge.presentation.model.ProductUIModel
 import com.ryan.opncodingchallenge.presentation.model.SelectedProduct
@@ -191,43 +192,17 @@ fun StoreView(
             )
         },
         bottomBar = {
-            Box(
+            BottomBar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(64.dp)
-                    .background(Color.White)
-            ) {
-                ElevatedCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Total: 0 THB",
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(start = 20.dp)
-                        )
-                        CheckoutButton(
-                            onClick = {
-                                Log.i("basket", "Basket : ${selectedProducts.toList()}")
-
+                    .height(66.dp)
+                    .background(Color.White),
+                navigateCheckOut = {
+                    Log.i("basket", "Basket : ${selectedProducts.toList()}")
 //                                navController.currentBackStackEntry?.savedStateHandle?.set("products", selectedProducts)
-                                navController.navigate(Routes.OrderSummaryScreen.route)
-                            },
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 20.dp)
-                        )
-                    }
+                    navController.navigate(Routes.OrderSummaryScreen.route)
                 }
-            }
+            )
         }
     ) { paddingValue ->
         Column(
