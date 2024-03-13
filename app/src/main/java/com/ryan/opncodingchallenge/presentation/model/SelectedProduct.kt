@@ -4,8 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class ProductUIModel(
-    val productName: String?,
-    val price: Long?,
-    val imageUrl: String?
+data class SelectedProduct(
+    val product: ProductUIModel,
+    var quantity: Int
 ) : Parcelable

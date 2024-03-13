@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.ryan.opncodingchallenge.R
+import com.ryan.opncodingchallenge.presentation.nav.Routes
 import com.ryan.opncodingchallenge.presentation.view.store.components.SubText
 import com.ryan.opncodingchallenge.presentation.view.store.components.TitleText
 import com.ryan.opncodingchallenge.presentation.view.ui.theme.Grey400
@@ -56,7 +57,7 @@ fun OrderSuccessView(navController: NavHostController) {
 
         Button(
             onClick = {
-
+                navController.navigate(Routes.StoreScreen.route) { popUpTo(0) }
             },
             modifier = Modifier
                 .padding(top = 36.dp, start = 20.dp, end = 20.dp)

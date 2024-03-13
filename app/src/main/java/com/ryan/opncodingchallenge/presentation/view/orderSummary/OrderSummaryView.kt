@@ -1,5 +1,6 @@
 package com.ryan.opncodingchallenge.presentation.view.orderSummary
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -33,17 +34,21 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.ryan.opncodingchallenge.R
 import com.ryan.opncodingchallenge.presentation.model.ProductUIModel
+import com.ryan.opncodingchallenge.presentation.model.SelectedProduct
+import com.ryan.opncodingchallenge.presentation.nav.Routes
 import com.ryan.opncodingchallenge.presentation.view.orderSummary.component.CheckoutProductRow
+import com.ryan.opncodingchallenge.presentation.view.orderSummary.component.LimitedTextField
 import com.ryan.opncodingchallenge.presentation.view.store.components.CheckoutButton
+import com.ryan.opncodingchallenge.presentation.view.store.components.DottedLine
 import com.ryan.opncodingchallenge.presentation.view.store.components.TitleText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrderSummaryView(navController: NavHostController) {
+fun OrderSummaryView(
+    navController: NavHostController
+) {
 
-    var productData by remember {
-        mutableStateOf<List<ProductUIModel>?>(null)
-    }
+//    val selectedProducts = navController.previousBackStackEntry?.savedStateHandle?.get<List<SelectedProduct>>("products")
 
     Scaffold(
         topBar = {
@@ -92,7 +97,7 @@ fun OrderSummaryView(navController: NavHostController) {
                         )
                         CheckoutButton(
                             onClick = {
-
+                                navController.navigate(Routes.OrderSuccessScreen.route) { popUpTo(0) }
                             },
                             modifier = Modifier
                                 .weight(1f)
@@ -115,11 +120,36 @@ fun OrderSummaryView(navController: NavHostController) {
             )
 
             CheckoutProductRow(
-                list = productData ?: emptyList(),
+                list = emptyList(),
                 onItemClicked = {
 
                 }
             )
+
+            TitleText(
+                modifier = Modifier.padding(start = 20.dp, top = 16.dp),
+                title = "Sub Total"
+            )
+
+            DottedLine(
+                color = Color.Gray,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp, start = 20.dp, end = 20.dp)
+            )
+
+            TitleText(
+                modifier = Modifier.padding(start = 20.dp, top = 21.dp),
+                title = "Shipping Address"
+            )
+
+            LimitedTextField(
+                maxLength = 100,
+                modifier = Modifier
+                    .padding(start = 20.dp, top = 16.dp)
+                    .fillMaxWidth()
+            )
+
         }
     }
 
@@ -130,5 +160,7 @@ fun OrderSummaryView(navController: NavHostController) {
 )
 @Composable
 fun OrderSummaryPreview() {
-    OrderSummaryView(navController = NavHostController(LocalContext.current))
+    OrderSummaryView(
+        navController = NavHostController(LocalContext.current)
+    )
 }

@@ -1,5 +1,6 @@
 package com.ryan.opncodingchallenge.presentation.view.store
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +16,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,6 +26,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,12 +42,15 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.os.bundleOf
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.ryan.opncodingchallenge.R
 import com.ryan.opncodingchallenge.presentation.common.ProgressDialog
 import com.ryan.opncodingchallenge.presentation.model.ProductUIModel
+import com.ryan.opncodingchallenge.presentation.model.SelectedProduct
 import com.ryan.opncodingchallenge.presentation.model.StoreUIModel
+import com.ryan.opncodingchallenge.presentation.nav.Routes
 import com.ryan.opncodingchallenge.presentation.view.store.components.CheckoutButton
 import com.ryan.opncodingchallenge.presentation.view.store.components.DottedLine
 import com.ryan.opncodingchallenge.presentation.view.store.components.OpenCloseTimeText
@@ -75,6 +82,8 @@ fun StoreView(
     var alertTitle by remember { mutableStateOf("") }
     var alertMsg by remember { mutableStateOf("") }
     var showLoading by remember { mutableStateOf(false) }
+
+    val selectedProducts = remember { mutableStateListOf<SelectedProduct>() }
 
     @Composable
     fun showAlert() {
@@ -185,28 +194,38 @@ fun StoreView(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp)
-                    .height(64.dp) // Set your desired height
+                    .height(64.dp)
                     .background(Color.White)
             ) {
-                Row(
+                ElevatedCard(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                        .fillMaxWidth()
+                        .height(64.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
                 ) {
-                    Text(
-                        text = "Total: 0 THB",
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 20.dp)
-                    )
-                    CheckoutButton(
-                        onClick = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Total: 0 THB",
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 20.dp)
+                        )
+                        CheckoutButton(
+                            onClick = {
+                                Log.i("basket", "Basket : ${selectedProducts.toList()}")
 
-                        },
-                        modifier = Modifier
-                            .padding(end = 20.dp)
-                    )
+//                                navController.currentBackStackEntry?.savedStateHandle?.set("products", selectedProducts)
+                                navController.navigate(Routes.OrderSummaryScreen.route)
+                            },
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 20.dp)
+                        )
+                    }
                 }
             }
         }
@@ -258,8 +277,18 @@ fun StoreView(
 
             ProductRow(
                 list = productData ?: emptyList(),
-                onItemClicked = {
-
+                onSelectionChange = { product, isSelected ->
+                    if (isSelected) {
+                        selectedProducts.add(SelectedProduct(product, quantity = 1))
+                    } else {
+                        selectedProducts.removeIf { it.product == product }
+                    }
+                },
+                onQuantityChange = { product, quantity ->
+                    val index = selectedProducts.indexOfFirst { it.product == product }
+                    if (index != -1) {
+                        selectedProducts[index].quantity = quantity
+                    }
                 }
             )
 

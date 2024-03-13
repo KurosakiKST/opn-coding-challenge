@@ -13,7 +13,8 @@ import com.ryan.opncodingchallenge.presentation.model.ProductUIModel
 @Composable
 fun ProductRow(
     list: List<ProductUIModel>,
-    onItemClicked: (ProductUIModel) -> Unit
+    onSelectionChange: (ProductUIModel, Boolean) -> Unit,
+    onQuantityChange: (ProductUIModel, Int) -> Unit
 ) {
     Column(modifier = Modifier.padding(top = 30.dp, start = 20.dp, end = 20.dp)) {
         LazyRow(
@@ -21,9 +22,11 @@ fun ProductRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             items(list.count()) { index ->
-                ProductItem(item = list[index]) {
-                    onItemClicked(it)
-                }
+                ProductItem(
+                    item = list[index],
+                    onSelectionChange = onSelectionChange,
+                    onQuantityChange = onQuantityChange
+                )
             }
         }
     }

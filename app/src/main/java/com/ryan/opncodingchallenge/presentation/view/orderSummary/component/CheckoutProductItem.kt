@@ -18,17 +18,18 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.ryan.opncodingchallenge.R
 import com.ryan.opncodingchallenge.presentation.model.ProductUIModel
+import com.ryan.opncodingchallenge.presentation.model.SelectedProduct
 
 @Composable
 fun CheckoutProductItem(
-    item: ProductUIModel,
-    onItemClicked: (ProductUIModel) -> Unit
+    item: SelectedProduct,
+    onItemClicked: (SelectedProduct) -> Unit
 ) {
     Row(
         modifier = Modifier.padding(8.dp)
     ) {
         AsyncImage(
-            model = item.imageUrl,
+            model = item.product.imageUrl,
             contentDescription = null,
             placeholder = painterResource(id = R.drawable.placehold_512),
             error = painterResource(id = R.drawable.placehold_512),
@@ -40,7 +41,7 @@ fun CheckoutProductItem(
             modifier = Modifier.padding(8.dp)
         ) {
             Text(
-                text = item.productName!!,
+                text = item.product.productName!!,
                 modifier = Modifier
                     .fillMaxWidth(),
                 overflow = TextOverflow.Ellipsis,
@@ -50,7 +51,7 @@ fun CheckoutProductItem(
             )
 
             Text(
-                text = "${item.price} THB",
+                text = "${item.product.price} THB",
                 fontFamily = FontFamily(Font(R.font.urbanist_medium)),
                 fontSize = 14.sp,
             )
@@ -64,7 +65,14 @@ fun CheckoutProductItem(
 @Composable
 fun CheckOutProductItemPreview() {
     CheckoutProductItem(
-        item = ProductUIModel("Coffee", 2000, "url"),
+        item = SelectedProduct(
+            product = ProductUIModel(
+                productName = "Coffee",
+                price = 2000,
+                imageUrl = "url"
+            ),
+            quantity = 5
+        ),
         onItemClicked = {}
     )
 }
