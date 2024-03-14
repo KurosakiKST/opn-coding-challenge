@@ -30,16 +30,21 @@ fun LimitedTextField(
         modifier = modifier
     ) {
         OutlinedTextField(
-            modifier = Modifier,
+            modifier = Modifier.fillMaxWidth(),
             value = text,
-            onValueChange = { text = it },
+            onValueChange = { newValue ->
+                if (newValue.text.length <= maxLength) {
+                    text = newValue
+                }
+            },
             label = { Text("Label") },
             enabled = true,
             readOnly = false,
             placeholder = {
                 Text(text = "placeholder")
             },
-            singleLine = true,
+            singleLine = false,
+            maxLines = 3,
             shape = RoundedCornerShape(12.dp),
         )
 

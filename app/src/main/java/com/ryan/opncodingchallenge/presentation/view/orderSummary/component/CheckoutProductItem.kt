@@ -2,8 +2,12 @@ package com.ryan.opncodingchallenge.presentation.view.orderSummary.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,7 +30,9 @@ fun CheckoutProductItem(
     onItemClicked: (SelectedProduct) -> Unit
 ) {
     Row(
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier
+            .padding(8.dp)
+            .size(width = 350.dp, height = 60.dp)
     ) {
         AsyncImage(
             model = item.product.imageUrl,
@@ -35,13 +41,14 @@ fun CheckoutProductItem(
             error = painterResource(id = R.drawable.placehold_512),
             contentScale = ContentScale.Crop,
             modifier = Modifier
+                .size(60.dp)
         )
 
         Column(
             modifier = Modifier.padding(8.dp)
         ) {
             Text(
-                text = item.product.productName!!,
+                text = item.product.productName!! + " x " + item.quantity,
                 modifier = Modifier
                     .fillMaxWidth(),
                 overflow = TextOverflow.Ellipsis,
