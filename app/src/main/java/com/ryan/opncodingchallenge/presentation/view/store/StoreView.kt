@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -16,8 +15,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -42,7 +39,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.os.bundleOf
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.ryan.opncodingchallenge.R
@@ -52,7 +48,6 @@ import com.ryan.opncodingchallenge.presentation.model.ProductUIModel
 import com.ryan.opncodingchallenge.presentation.model.SelectedProduct
 import com.ryan.opncodingchallenge.presentation.model.StoreUIModel
 import com.ryan.opncodingchallenge.presentation.nav.Routes
-import com.ryan.opncodingchallenge.presentation.view.store.components.CheckoutButton
 import com.ryan.opncodingchallenge.presentation.view.store.components.DottedLine
 import com.ryan.opncodingchallenge.presentation.view.store.components.OpenCloseTimeText
 import com.ryan.opncodingchallenge.presentation.view.store.components.ProductRow
@@ -112,13 +107,21 @@ fun StoreView(
     }
 
     LaunchedEffect(Unit) {
+        navController.addOnDestinationChangedListener { controller, _, _ ->
+            if (controller.previousBackStackEntry?.destination?.route == Routes.OrderSummaryScreen.route) {
+                viewModel.setSelectedProducts(viewModel.selectedProducts.value)
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
         viewModel.getStoreData()
         viewModel.getProducts()
+
         scope.launch {
             viewModel.storeState.collect {
                 when (it) {
                     is ViewState.Error -> {
-
                         showLoading = false
                         alertTitle = "Error"
                         alertMsg = it.error
@@ -145,7 +148,6 @@ fun StoreView(
             viewModel.productState.collect {
                 when (it) {
                     is ViewState.Error -> {
-
                         showLoading = false
                         alertTitle = "Error"
                         alertMsg = it.error
@@ -198,10 +200,14 @@ fun StoreView(
                     .height(66.dp)
                     .background(Color.White),
                 navigateCheckOut = {
+
                     Log.i("basket", "Basket : ${selectedProducts.toList()}")
-//                                navController.currentBackStackEntry?.savedStateHandle?.set("products", selectedProducts)
+
+                    viewModel.setSelectedProducts(selectedProducts.toList())
+
                     navController.navigate(Routes.OrderSummaryScreen.route)
-                }
+                },
+                totalAmount = viewModel.totalAmount.value
             )
         }
     ) { paddingValue ->
@@ -254,15 +260,29 @@ fun StoreView(
                 list = productData ?: emptyList(),
                 onSelectionChange = { product, isSelected ->
                     if (isSelected) {
-                        selectedProducts.add(SelectedProduct(product, quantity = 1))
+                        // Check if the product is already selected
+                        val existingProduct = selectedProducts.find { it.product == product }
+                        if (existingProduct != null) {
+                            // If the product is already selected, update its quantity instead of adding a new item
+                            existingProduct.quantity++
+                        } else {
+                            // If the product is not already selected, add it with quantity 1
+                            selectedProducts.add(SelectedProduct(product, quantity = 1))
+                        }
+                        viewModel.setSelectedProducts(selectedProducts)
+                        viewModel.updateTotalAmount(selectedProducts)
                     } else {
                         selectedProducts.removeIf { it.product == product }
+                        viewModel.setSelectedProducts(selectedProducts)
+                        viewModel.updateTotalAmount(selectedProducts)
                     }
                 },
                 onQuantityChange = { product, quantity ->
                     val index = selectedProducts.indexOfFirst { it.product == product }
                     if (index != -1) {
                         selectedProducts[index].quantity = quantity
+                        viewModel.setSelectedProducts(selectedProducts)
+                        viewModel.updateTotalAmount(selectedProducts)
                     }
                 }
             )

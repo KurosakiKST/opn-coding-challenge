@@ -2,27 +2,28 @@ package com.ryan.opncodingchallenge.presentation.nav
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavType
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.ryan.opncodingchallenge.presentation.model.SelectedProduct
 import com.ryan.opncodingchallenge.presentation.view.orderSuccess.OrderSuccessView
 import com.ryan.opncodingchallenge.presentation.view.orderSummary.OrderSummaryView
 import com.ryan.opncodingchallenge.presentation.view.store.StoreView
+import com.ryan.opncodingchallenge.presentation.viewmodel.StoreViewModel
 
 @ExperimentalMaterial3Api
 @Composable
 internal fun Route() {
     val navController = rememberNavController()
 
+    val storeSharedViewModel: StoreViewModel = hiltViewModel()
+
     NavHost(navController = navController, startDestination = Routes.StoreScreen.route) {
         composable(Routes.StoreScreen.route) {
-            StoreView(navController = navController)
+            StoreView(navController = navController, viewModel = storeSharedViewModel)
         }
         composable(Routes.OrderSummaryScreen.route) {
-            OrderSummaryView(navController = navController)
+            OrderSummaryView(navController = navController, viewModel = storeSharedViewModel)
         }
         composable(Routes.OrderSuccessScreen.route) {
             OrderSuccessView(navController = navController)

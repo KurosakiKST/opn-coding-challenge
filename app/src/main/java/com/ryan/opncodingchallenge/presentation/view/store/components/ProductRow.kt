@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ryan.opncodingchallenge.presentation.model.ProductUIModel
+import com.ryan.opncodingchallenge.presentation.model.SelectedProduct
 
 @Composable
 fun ProductRow(

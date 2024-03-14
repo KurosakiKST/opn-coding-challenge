@@ -15,12 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ryan.opncodingchallenge.presentation.view.store.components.CheckoutButton
 
 @Composable
 fun BottomBar(
     modifier: Modifier,
-    navigateCheckOut: () -> Unit
+    navigateCheckOut: () -> Unit,
+    totalAmount: Int
 ) {
     Box(
         modifier = modifier
@@ -38,7 +38,7 @@ fun BottomBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Total: 0 THB",
+                    text = "Total: $totalAmount THB",
                     modifier = Modifier.padding(start = 20.dp),
                 )
                 CheckoutButton(
@@ -59,6 +59,7 @@ fun BottomBar(
 fun BottomBarPreview() {
     BottomBar(
         modifier = Modifier,
-        navigateCheckOut = {}
+        navigateCheckOut = {},
+        totalAmount = 120
     )
 }

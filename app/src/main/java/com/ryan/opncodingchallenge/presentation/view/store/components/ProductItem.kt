@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.ryan.opncodingchallenge.R
 import com.ryan.opncodingchallenge.presentation.model.ProductUIModel
+import com.ryan.opncodingchallenge.presentation.model.SelectedProduct
 import com.ryan.opncodingchallenge.presentation.view.ui.theme.Teal900
 
 @Composable
@@ -126,22 +127,26 @@ fun ProductItem(
     }
 }
 
-@Preview(
-    showBackground = true
-)
-@Composable
-fun ProductItemPreview() {
-    ProductItem(
-        item = ProductUIModel(
-            productName = "Coffee",
-            price = 1000,
-            imageUrl = "https://www.nespresso.com/ncp/res/uploads/recipes/nespresso-recipes-Latte-Art-Tulip.jpg"
-        ),
-        onSelectionChange = { _, _ ->
-
-        },
-        onQuantityChange = { _, _ ->
-
-        }
-    )
-}
+//@Preview(
+//    showBackground = true
+//)
+//@Composable
+//fun ProductItemPreview() {
+//    ProductItem(
+//        item = SelectedProduct(
+//            ProductUIModel(
+//                productName = "Coffee",
+//                price = 1000,
+//                imageUrl = "https://www.nespresso.com/ncp/res/uploads/recipes/nespresso-recipes-Latte-Art-Tulip.jpg"
+//            ),
+//            quantity = 2
+//        ),
+//        index = 1,
+//        onSelectionChange = { _, _, _ ->
+//
+//        },
+//        onQuantityChange = { _, _, _ ->
+//
+//        }
+//    )
+//}
