@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ryan.opncodingchallenge.domain.model.ProductDomainModel
 import com.ryan.opncodingchallenge.domain.usecase.StoreUseCase
+import com.ryan.opncodingchallenge.presentation.model.OrderDetails
 import com.ryan.opncodingchallenge.presentation.model.ProductUIModel
 import com.ryan.opncodingchallenge.presentation.model.SelectedProduct
 import com.ryan.opncodingchallenge.presentation.model.StoreUIModel
@@ -33,6 +34,9 @@ class StoreViewModel @Inject constructor(
     private val _productState =
         MutableStateFlow<ViewState<List<ProductUIModel>>>(ViewState.NoData)
     val productState: StateFlow<ViewState<List<ProductUIModel>>> = _productState
+
+    private val _orderState = MutableStateFlow<ViewState<Unit>>(ViewState.NoData)
+    val orderState: StateFlow<ViewState<Unit>> = _orderState
 
     private val _selectedProducts = mutableStateOf<List<SelectedProduct>>(emptyList())
     val selectedProducts: State<List<SelectedProduct>> = _selectedProducts
@@ -84,6 +88,33 @@ class StoreViewModel @Inject constructor(
                         _productState.value = ViewState.Success(productUIModels)
                     }
                 }
+            }
+        }
+    }
+
+    fun makeOrder(orderDetails: OrderDetails) {
+        // Set loading state while making the order
+        _orderState.value = ViewState.Loading
+
+        // Make the API call to send order details
+        viewModelScope.launch {
+            try {
+                // Call your API service to send order details
+                val result = storeUseCase.makeOrder(orderDetails)
+                when (result) {
+                    is AppResult.Success -> {
+                        // Order successful
+                        _orderState.value = ViewState.Success(Unit)
+                    }
+
+                    is AppResult.Failure -> {
+                        // Order failed, handle error
+                        _orderState.value = ViewState.Error("Order failed: ${result.error.message}")
+                    }
+                }
+            } catch (e: Exception) {
+                // Exception occurred, handle error
+                _orderState.value = ViewState.Error("Error: ${e.message}")
             }
         }
     }

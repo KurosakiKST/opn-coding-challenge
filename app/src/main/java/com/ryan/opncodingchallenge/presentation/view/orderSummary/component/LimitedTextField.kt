@@ -20,7 +20,8 @@ import com.ryan.opncodingchallenge.R
 @Composable
 fun LimitedTextField(
     maxLength: Int,
-    modifier: Modifier
+    modifier: Modifier,
+    onDeliveryAddressChanged: (String) -> Unit
 ) {
     var text by remember { mutableStateOf(TextFieldValue()) }
 
@@ -35,13 +36,14 @@ fun LimitedTextField(
             onValueChange = { newValue ->
                 if (newValue.text.length <= maxLength) {
                     text = newValue
+                    onDeliveryAddressChanged(newValue.text)
                 }
             },
-            label = { Text("Label") },
+            label = { Text("Address") },
             enabled = true,
             readOnly = false,
             placeholder = {
-                Text(text = "placeholder")
+                Text(text = "Input your address here")
             },
             singleLine = false,
             maxLines = 3,
@@ -62,5 +64,5 @@ fun LimitedTextField(
 )
 @Composable
 fun PreviewLimitedTextField() {
-    LimitedTextField(maxLength = 100, modifier = Modifier)
+    LimitedTextField(maxLength = 100, modifier = Modifier, onDeliveryAddressChanged = {})
 }

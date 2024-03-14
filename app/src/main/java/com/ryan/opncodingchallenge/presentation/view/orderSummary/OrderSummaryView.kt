@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,14 +38,16 @@ import androidx.navigation.NavHostController
 import com.ryan.opncodingchallenge.R
 import com.ryan.opncodingchallenge.presentation.common.BottomBar
 import com.ryan.opncodingchallenge.presentation.model.ProductUIModel
-import com.ryan.opncodingchallenge.presentation.model.SelectedProduct
 import com.ryan.opncodingchallenge.presentation.nav.Routes
 import com.ryan.opncodingchallenge.presentation.view.orderSummary.component.CheckoutProductRow
 import com.ryan.opncodingchallenge.presentation.view.orderSummary.component.LimitedTextField
 import com.ryan.opncodingchallenge.presentation.view.store.components.DottedLine
 import com.ryan.opncodingchallenge.presentation.view.store.components.TitleTextMedium
 import com.ryan.opncodingchallenge.presentation.viewmodel.StoreViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.ryan.opncodingchallenge.presentation.model.OrderDetails
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,6 +56,8 @@ fun OrderSummaryView(
     viewModel: StoreViewModel
 ) {
     val selectedProducts = viewModel.selectedProducts.value
+    val orderList = mutableListOf<ProductUIModel>()
+    var deliveryAddress by remember { mutableStateOf("") }
 
     Log.i("basket", "OrderSummary : $selectedProducts")
     val totalAmount = viewModel.totalAmount.value
@@ -85,7 +91,18 @@ fun OrderSummaryView(
                     .height(66.dp)
                     .background(Color.White),
                 navigateCheckOut = {
+                    selectedProducts.forEach { selectedProduct ->
+                        repeat(selectedProduct.quantity) {
+                            orderList.add(selectedProduct.product)
+                        }
+                    }
 
+                    val orderDetails = OrderDetails(
+                        products = orderList,
+                        deliveryAddress = deliveryAddress
+                    )
+
+                    viewModel.makeOrder(orderDetails = orderDetails)
                     navController.navigate(Routes.OrderSuccessScreen.route)
                 },
                 totalAmount = totalAmount
@@ -105,7 +122,7 @@ fun OrderSummaryView(
 
             Column(
                 modifier = Modifier
-                    .size(300.dp)
+                    .size(350.dp)
                     .fillMaxWidth()
                     .padding(start = 20.dp)
             ) {
@@ -159,7 +176,9 @@ fun OrderSummaryView(
                 modifier = Modifier
                     .padding(start = 20.dp, top = 16.dp, end = 20.dp)
                     .fillMaxWidth(1f)
-            )
+            ) { newAddress ->
+                deliveryAddress = newAddress // Update the delivery address when it changes
+            }
 
         }
     }
